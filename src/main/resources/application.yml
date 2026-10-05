@@ -1,0 +1,69 @@
+server:
+  address: 0.0.0.0
+  port: 9753
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: receipt-voice
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/receipt_voice?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 'Hai14031993@@@'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+
+  jpa:
+    hibernate:
+      ddl-auto: update       # dev: auto create/update tables. Prod: switch to 'validate'
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        jdbc:
+          time_zone: Asia/Ho_Chi_Minh
+
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+    date-format: yyyy-MM-dd'T'HH:mm:ss
+    default-property-inclusion: non_null
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+# ---------- Excel column mapping ----------
+# Column indices are 0-based: A=0, B=1, C=2, D=3, E=4, F=5
+excel:
+  file-path: classpath:data/invoice.xlsx
+  sheet-index: 0
+  header-row: 0          # header on row 1; data starts row 2
+  order-code-col: 1      # B = mã đơn hàng
+  customer-name-col: 2   # C = tên khách
+  amount-col: 3          # D = số tiền
+  invoice-col: 4         # F = mã invoice (đổi thành 4 nếu thực tế ở cột E)
+
+# ---------- CORS (used by CorsConfig.java) ----------
+app:
+  cors:
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173
+
+# ---------- Logging ----------
+logging:
+  level:
+    root: INFO
+    com.app: DEBUG
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
