@@ -1,7 +1,7 @@
 package com.app.controller;
 
 import com.app.dto.OrderLookupDto;
-import com.app.service.ExcelLookupService;
+import com.app.service.InvoiceLookupService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,8 +11,11 @@ import java.util.Map;
 @RequestMapping("/api/lookup")
 public class LookupController {
 
-    private final ExcelLookupService service;
-    public LookupController(ExcelLookupService s) { this.service = s; }
+    private final InvoiceLookupService service;
+
+    public LookupController(InvoiceLookupService s) {
+        this.service = s;
+    }
 
     @GetMapping("/order/{code}")
     public OrderLookupDto one(@PathVariable String code) {

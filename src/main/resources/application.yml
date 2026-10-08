@@ -1,5 +1,4 @@
 server:
-  address: 0.0.0.0
   port: 9753
   servlet:
     encoding:
@@ -12,7 +11,8 @@ spring:
     name: receipt-voice
 
   datasource:
-    url: jdbc:mysql://localhost:3306/receipt_voice?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&useSSL=false
+    # ✅ Thêm &rewriteBatchedStatements=true để MySQL thực sự batch insert
+    url: jdbc:mysql://localhost:3306/receipt_voice?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&useSSL=false&rewriteBatchedStatements=true
     username: root
     password: 'Hai14031993@@@'
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -24,7 +24,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update       # dev: auto create/update tables. Prod: switch to 'validate'
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -32,6 +32,10 @@ spring:
         format_sql: true
         jdbc:
           time_zone: Asia/Ho_Chi_Minh
+          # ✅ Batch insert cho InvoiceImportService (~25K rows)
+          batch_size: 500
+        order_inserts: true
+        order_updates: true
 
   jackson:
     time-zone: Asia/Ho_Chi_Minh
@@ -48,16 +52,16 @@ spring:
 excel:
   file-path: classpath:data/invoice.xlsx
   sheet-index: 0
-  header-row: 0          # header on row 1; data starts row 2
-  order-code-col: 1      # B = mã đơn hàng
-  customer-name-col: 2   # C = tên khách
-  amount-col: 3          # D = số tiền
-  invoice-col: 4         # F = mã invoice (đổi thành 4 nếu thực tế ở cột E)
+  header-row: 0          # header row 1; data from row 2
+  order-code-col: 1      # B = Invoice (= orderCode trong hệ thống)
+  customer-name-col: 2   # C = Customer
+  amount-col: 3          # D = Value
+  invoice-col: 4         # E = F.Inv (invoice code thật)
 
-# ---------- CORS (used by CorsConfig.java) ----------
+# ---------- CORS ----------
 app:
   cors:
-    allowed-origins: http://localhost:5173,http://127.0.0.1:5173
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173,http://localhost:5773,http://127.0.0.1:5773
 
 # ---------- Logging ----------
 logging:
